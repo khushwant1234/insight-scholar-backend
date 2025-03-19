@@ -52,7 +52,7 @@ const getCollegeById = async (req, res) => {;
 // Get all colleges
 const getAllColleges = async (req, res) => {
   try {
-    const colleges = await College.find({})
+    const colleges = await College.find({})  // Returns all colleges
       .populate("members", "name profilePic")
       .populate("posts");
     res.json({ success: true, colleges });
@@ -131,4 +131,32 @@ const joinCollege = async (req, res) => {
   }
 };
 
-export { createCollege, getCollegeById, getAllColleges, updateCollege, deleteCollege, joinCollege };
+// Controller to get student mentors (users with isMentor flag set to true)
+const getStudentMentors = async (req, res) => {
+  try {
+    // Find users with isMentor true and populate their college information
+    const mentors = await User.find({ isMentor: true })
+      .select(
+        "_id name email profilePic college major year karma stats mentorDetails"
+      )
+      .populate("college", "name location"); // Populate college data
+      
+    res.json({ success: true, mentors });
+  } catch (error) {
+    console.error("Error fetching student mentors:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+const getCollegeNames = async (req, res) => {
+  try {
+    const colleges = await College.find({}).select("name");
+    // console.log("Colleges", colleges);
+    res.json({ success: true, colleges });
+  } catch (error) {
+    console.error("Error fetching college names:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+export { createCollege, getCollegeById, getAllColleges, updateCollege, deleteCollege, joinCollege, getStudentMentors, getCollegeNames };

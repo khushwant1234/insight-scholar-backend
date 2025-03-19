@@ -1,4 +1,7 @@
 import { Reply } from "../Models/replyModel.js";
+import { User } from "../Models/userModel.js";
+import { Post } from "../Models/postModel.js";
+import { checkAndUpdateMentorStatus } from "../utils/mentorUtils.js";
 
 // Create a new reply
 const createReply = async (req, res) => {
@@ -11,6 +14,21 @@ const createReply = async (req, res) => {
     }
 
     const reply = await Reply.create({ author, post, content, media });
+    
+    // Add reply to post's replies array
+    await Post.findByIdAndUpdate(post, { $push: { replies: reply._id } });
+    
+    // Add 6 karma for replying and update stats
+    await User.findByIdAndUpdate(author, { 
+      $inc: { 
+        "stats.answersGiven": 1,
+        karma: 6  // Add 6 karma for replying
+      }
+    });
+    
+    // Check if user should become a mentor
+    await checkAndUpdateMentorStatus(author);
+
     res.status(201).json({ success: true, reply });
   } catch (error) {
     console.error("Error creating reply:", error);
@@ -52,9 +70,18 @@ const deleteReply = async (req, res) => {
       return res.status(404).json({ error: "Reply not found" });
     }
 
-    // (Optional) Add authorization check here to ensure the user is allowed to delete the reply
+    // Remove reply from post's replies array
+    await Post.findByIdAndUpdate(reply.post, { $pull: { replies: reply._id } });
+    
+    // Remove karma gained from replying
+    await User.findByIdAndUpdate(reply.author, { 
+      $inc: { 
+        "stats.answersGiven": -1,
+        karma: -6
+      }
+    });
 
-    await reply.remove();
+    await reply.deleteOne();
     res.json({ message: "Reply removed successfully" });
   } catch (error) {
     console.error("Error deleting reply:", error);

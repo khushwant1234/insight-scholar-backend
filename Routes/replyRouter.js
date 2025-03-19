@@ -17,6 +17,6 @@ router.delete("/:id", protect, deleteReply);
 router.put("/upvotes/:id", protect, updateReplyUpvotes);
 
 // Get all replies for a specific post (Public or Protected as needed)
-router.get("/post/:postId", getRepliesByPost);
+router.post("/post/:postId", getRepliesByPost);
 
 export default router;

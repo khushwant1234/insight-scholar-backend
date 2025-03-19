@@ -18,7 +18,6 @@ const userSchema = new Schema(
     },
     profilePic: {
       type: String, // URL to the user's profile picture
-      
     },
     // The college the user is primarily associated with
     college: {
@@ -65,6 +64,8 @@ const userSchema = new Schema(
         ref: "College",
       },
     ],
+    // Removed upvotedPosts array - now using Upvote model instead
+    
     // Mentor-related fields (a user becomes a mentor when they have sufficient karma)
     isMentor: {
       type: Boolean,
@@ -84,8 +85,14 @@ const userSchema = new Schema(
         type: Boolean,
         default: false,
       },
-      // You can add more fields (like hourly rate, availability, etc.) here if needed.
+      // Additional mentor fields if needed
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false
+    },
+    verificationToken: String,
+    verificationTokenExpires: Date,
   },
   { timestamps: true }
 );

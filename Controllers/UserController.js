@@ -78,4 +78,40 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
-export { getUserProfile, updateUserProfile };
+// Controller to get student mentors (users with isMentor flag set to true)
+const getStudentMentors = async (req, res) => {
+  try {
+    // Find users with isMentor true and select relevant fields
+    const mentors = await User.find({ isMentor: true }).select(
+      "_id name email profilePic college major year karma stats mentorDetails"
+    )
+    .populate("college", "name location");
+    
+    res.json({ success: true, mentors });
+  } catch (error) {
+    console.error("Error fetching student mentors:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Controller to get a specific student mentor by ID
+const getMentorById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const mentor = await User.findOne({ _id: id, isMentor: true })
+      .select("_id name email profilePic college major year karma stats interests linkedIn mentorDetails bio")
+      .populate("college", "name location");
+    
+    if (!mentor) {
+      return res.status(404).json({ error: "Mentor not found" });
+    }
+    
+    res.json({ success: true, mentor });
+  } catch (error) {
+    console.error("Error fetching mentor:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+export { getUserProfile, updateUserProfile, getStudentMentors, getMentorById };

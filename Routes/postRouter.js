@@ -4,9 +4,10 @@ import {
   updatePost, 
   deletePost, 
   getPostsByCollege, 
-  getPostById,
+  getPostById, 
   getPostsByUser,
-  updatePostUpvotes
+  updatePostUpvotes,
+  getTopPosts,
 } from "../Controllers/postController.js";
 import { protect } from "../Middlewares/auth.js";
 
@@ -16,18 +17,22 @@ const router = express.Router();
 router.post("/", protect, createPost);
 
 // Get all posts for a specific college
-router.get("/college/:collegeId", getPostsByCollege);
+router.post("/college/:collegeId", getPostsByCollege);
 
 // Get all posts for a specific user
-router.get("/user/:userId", getPostsByUser);
+router.post("/user/:userId", getPostsByUser);
 
 // Get a single post by ID, update and delete a specific post (Protected for update & delete)
 router.route("/:id")
-  .get(getPostById)
+  .post(getPostById)
   .put(protect, updatePost)
   .delete(protect, deletePost);
 
 // New: Update post upvotes (Protected)
+// This route will update the upvotes for a post and update the user's upvotedPosts array.
 router.put("/upvotes/:id", protect, updatePostUpvotes);
+
+// Get top posts
+router.get('/top', getTopPosts);
 
 export default router;
