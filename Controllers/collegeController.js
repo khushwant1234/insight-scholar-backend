@@ -1,4 +1,5 @@
 import { College } from "../Models/collegeModel.js";
+import { User } from "../Models/userModel.js";
 
 // Create a new college
 const createCollege = async (req, res) => {
@@ -148,6 +149,30 @@ const getStudentMentors = async (req, res) => {
   }
 };
 
+// Get all mentors from a specific college
+const getCollegeMentors = async (req, res) => {
+  try {
+    const { collegeId } = req.params;
+    
+    // Find users who are mentors AND belong to this specific college
+    const mentors = await User.find({ 
+      isMentor: true,
+      college: collegeId
+    })
+    .select("_id name email profilePic major year karma stats mentorDetails")
+    .sort({ karma: -1 }); // Sort by karma (highest first)
+    
+    res.json({ 
+      success: true, 
+      mentors,
+      count: mentors.length
+    });
+  } catch (error) {
+    console.error("Error fetching college mentors:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 const getCollegeNames = async (req, res) => {
   try {
     const colleges = await College.find({}).select("name");
@@ -159,4 +184,4 @@ const getCollegeNames = async (req, res) => {
   }
 }
 
-export { createCollege, getCollegeById, getAllColleges, updateCollege, deleteCollege, joinCollege, getStudentMentors, getCollegeNames };
+export { createCollege, getCollegeById, getAllColleges, updateCollege, deleteCollege, joinCollege, getStudentMentors, getCollegeNames, getCollegeMentors };

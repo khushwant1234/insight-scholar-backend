@@ -6,7 +6,8 @@ import {
   updateCollege,
   deleteCollege,
   joinCollege,
-  getCollegeNames
+  getCollegeNames,
+  getCollegeMentors
 } from '../Controllers/collegeController.js';
 
 const router = express.Router();
@@ -14,6 +15,9 @@ const router = express.Router();
 // Define specific routes first
 router.get('/getCollegeNames', getCollegeNames);
 router.get('/allColleges', getAllColleges);
+
+// Get all mentors from a specific college
+router.get("/:collegeId/mentors", getCollegeMentors);
 
 // Then define parameterized routes
 router.get('/:id', getCollegeById);
