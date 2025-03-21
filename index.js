@@ -21,9 +21,9 @@ import { ChatMessage } from './Models/chatModel.js';
 import { User } from './Models/userModel.js';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 const corsOptions = {
-  origin: "*",
+  origin: "https://insight-scholar.vercel.app",
   credentials: true,
   methods: [ 'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS' ],
   allowedHeaders: [ 'Content-Type', 'Authorization' ]
@@ -31,7 +31,7 @@ const corsOptions = {
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: process.env.FRONTEND_URL || "https://insight-scholar.vercel.app",
     methods: ["GET", "POST"]
   }
 });
