@@ -26,6 +26,6 @@ router.put('/:id', updateCollege);
 router.delete('/:id', deleteCollege);
 
 // Other routes
-router.post('/', createCollege);
+router.post('/createCollege', createCollege);
 
 export default router;
