@@ -9,6 +9,7 @@ import {
   getCollegeNames,
   getCollegeMentors
 } from '../Controllers/collegeController.js';
+import { protect } from "../Middlewares/auth.js";
 
 const router = express.Router();
 
@@ -17,13 +18,13 @@ router.get('/getCollegeNames', getCollegeNames);
 router.get('/allColleges', getAllColleges);
 
 // Get all mentors from a specific college
-router.get("/:collegeId/mentors", getCollegeMentors);
+router.get("/:collegeId/mentors", protect, getCollegeMentors);
 
 // Then define parameterized routes
-router.get('/:id', getCollegeById);
-router.put('/:id/join', joinCollege);
-router.put('/:id', updateCollege);
-router.delete('/:id', deleteCollege);
+router.get('/:id', protect, getCollegeById);
+router.put('/:id/join', protect, joinCollege);
+router.put('/:id', protect, updateCollege);
+router.delete('/:id', protect, deleteCollege);
 
 // Other routes
 router.post('/createCollege', createCollege);
