@@ -19,10 +19,10 @@ export const registerUser = AsyncHandler(async (req, res) => {
     throw new ApiError(400, "User already exists");
   }
 
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@snu\.edu\.in$/;
-  if (!emailRegex.test(email)) {
-    throw new ApiError(400, "Email must be a valid @snu.edu.in address");
-  }
+  // const emailRegex = /^[a-zA-Z0-9._%+-]+@snu\.edu\.in$/;
+  // if (!emailRegex.test(email)) {
+  //   throw new ApiError(400, "Email must be a valid @snu.edu.in address");
+  // }
 
   // Generate verification token
   const verificationToken = crypto.randomBytes(32).toString('hex');
