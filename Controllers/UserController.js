@@ -41,7 +41,6 @@ const getUserProfile = async (req, res) => {
 
 // Controller to update logged-in user's info
 const updateUserProfile = async (req, res) => {
-  
   try {
     // Assumes req.user is set from an authentication middleware
     const user = await User.findById(req.user.id);
@@ -53,7 +52,14 @@ const updateUserProfile = async (req, res) => {
     const { name, profilePic, college, major, year, interests, linkedIn } = req.body;
     if (name) user.name = name;
     if (profilePic) user.profilePic = profilePic;
-    if (college) user.college = college;
+    
+    // Special handling for college field
+    if (college === null || college === "notInCollege") {
+      user.college = null; // Clear the college reference
+    } else if (college) {
+      user.college = college;
+    }
+    
     if (major) user.major = major;
     if (year) user.year = year;
     if (interests) user.interests = interests;
@@ -114,4 +120,36 @@ const getMentorById = async (req, res) => {
   }
 };
 
-export { getUserProfile, updateUserProfile, getStudentMentors, getMentorById };
+// Controller to toggle mentor status (for users to opt out of being a mentor)
+const toggleMentorStatus = async (req, res) => {
+  try {
+    // Assumes req.user is set from an authentication middleware
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    // Only allow users to opt out if they're currently a mentor
+    // They can't manually opt in - that happens automatically via karma
+    if (user.isMentor) {
+      user.isMentor = false;
+      
+      // Clear any mentor details when opting out
+      user.mentorDetails.isAssigned = false;
+      user.mentorDetails.assignedTo = null;
+    }
+    
+    const updatedUser = await user.save();
+    
+    res.json({
+      success: true,
+      message: "Mentor status updated successfully",
+      isMentor: updatedUser.isMentor
+    });
+  } catch (error) {
+    console.error("Error toggling mentor status:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+export { getUserProfile, updateUserProfile, getStudentMentors, getMentorById, toggleMentorStatus };

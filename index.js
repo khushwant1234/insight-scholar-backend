@@ -23,7 +23,8 @@ import { User } from './Models/userModel.js';
 const app = express();
 const PORT = process.env.PORT || 8000;
 const corsOptions = {
-  origin: "https://insight-scholar.vercel.app",
+  origin: "https://insight-scholar.vercel.app" || process.env.FRONTEND_URL,
+  
   credentials: true,
   methods: [ 'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS' ],
   allowedHeaders: [ 'Content-Type', 'Authorization' ]

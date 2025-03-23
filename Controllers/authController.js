@@ -10,8 +10,8 @@ import sendEmail from "../utils/emailService.js";
 export const registerUser = AsyncHandler(async (req, res) => {
   const { name, email, password, major, year, linkedIn, college } = req.body;
 
-  if (!name || !email || !password || !major || !year || !college) {
-    throw new ApiError(400, "All fields are required");
+  if (!name || !email || !password) {
+    throw new ApiError(400, "Name, email and password are required");
   }
 
   const existingUser = await User.findOne({ email });
@@ -31,18 +31,21 @@ export const registerUser = AsyncHandler(async (req, res) => {
   const userData = { 
     name, 
     email, 
-    password, 
-    major, 
-    year, 
-    college,
+    password,
     verificationToken,
     verificationTokenExpires: Date.now() + 24 * 60 * 60 * 1000, // Token expires in 24 hours
     isEmailVerified: false
   };
   
-  if (linkedIn) {
-    userData.linkedIn = linkedIn;
+  // Only add college if it's not "notInCollege"
+  if (college && college !== "notInCollege") {
+    userData.college = college;
   }
+  
+  // Add other optional fields if provided
+  if (major) userData.major = major;
+  if (year) userData.year = year;
+  if (linkedIn) userData.linkedIn = linkedIn;
 
   const newUser = await User.create(userData);
   if (!newUser) {

@@ -23,6 +23,8 @@ const userSchema = new Schema(
     college: {
       type: Schema.Types.ObjectId,
       ref: "College",
+      // Make college field optional to support users not in college
+      required: false 
     },
     major: {
       type: String,

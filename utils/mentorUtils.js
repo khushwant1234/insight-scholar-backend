@@ -1,3 +1,4 @@
+import { User } from "../Models/userModel.js";
 /**
  * Checks if user has enough karma to become a mentor and updates status if needed
  * @param {string} userId - MongoDB ID of the user

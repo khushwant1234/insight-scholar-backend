@@ -33,9 +33,26 @@ const createCollege = async (req, res) => {
 };
 
 // Get a single college by ID
-const getCollegeById = async (req, res) => {;
+const getCollegeById = async (req, res) => {
   try {
     const { id } = req.params;
+    
+    // Handle case where id is undefined, null, or "notInCollege"
+    if (!id || id === "undefined" || id === "null" || id === "notInCollege") {
+      return res.json({ 
+        success: true, 
+        college: {
+          _id: "notInCollege",
+          name: "Not in College",
+          location: null,
+          description: "This represents users who are not affiliated with any college",
+          members: [],
+          posts: []
+        }
+      });
+    }
+    
+    // Regular case - find college by ID
     const college = await College.findById(id)
       .populate("members", "name profilePic")
       .populate("posts");
@@ -43,9 +60,26 @@ const getCollegeById = async (req, res) => {;
     if (!college) {
       return res.status(404).json({ error: "College not found" });
     }
+    
     res.json({ success: true, college });
   } catch (error) {
     console.error("Error fetching college:", error);
+    
+    // Handle invalid ID format errors gracefully
+    if (error.name === 'CastError' && error.kind === 'ObjectId') {
+      return res.json({ 
+        success: true, 
+        college: {
+          _id: "notInCollege",
+          name: "Not in College", 
+          location: null,
+          description: "This represents users who are not affiliated with any college",
+          members: [],
+          posts: []
+        }
+      });
+    }
+    
     res.status(500).json({ error: "Server error" });
   }
 };
