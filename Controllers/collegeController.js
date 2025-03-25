@@ -4,7 +4,7 @@ import { User } from "../Models/userModel.js";
 // Create a new college
 const createCollege = async (req, res) => {
   try {
-    const { name, profilePic, location, description, facts, domain } = req.body;
+    const { name, profilePic, location, description, facts, domain, emailDomains } = req.body;
     
     // Basic validation: name is required
     if (!name) {
@@ -23,6 +23,7 @@ const createCollege = async (req, res) => {
       description,
       facts,
       domain,
+      emailDomains, // Add the new field
     });
 
     res.status(201).json({ success: true, college });

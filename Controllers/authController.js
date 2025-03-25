@@ -5,6 +5,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { generateJWTToken } from "../utils/GenerateJWT.js";
 import { User } from "../Models/userModel.js";
 import sendEmail from "../utils/emailService.js";
+import { College } from "../Models/collegeModel.js";
 
 // Controller to register a new user
 export const registerUser = AsyncHandler(async (req, res) => {
@@ -19,10 +20,27 @@ export const registerUser = AsyncHandler(async (req, res) => {
     throw new ApiError(400, "User already exists");
   }
 
-  // const emailRegex = /^[a-zA-Z0-9._%+-]+@snu\.edu\.in$/;
-  // if (!emailRegex.test(email)) {
-  //   throw new ApiError(400, "Email must be a valid @snu.edu.in address");
-  // }
+  // If a college is selected (and not "notInCollege"), verify the email domain
+  if (college && college !== "notInCollege") {
+    const collegeData = await College.findById(college);
+    
+    if (!collegeData) {
+      throw new ApiError(404, "Selected college not found");
+    }
+    
+    // Extract email domain from user's email
+    const userEmailDomain = email.split('@')[1];
+    
+    // If the college has specified email domains, verify the user's email
+    if (collegeData.emailDomains && collegeData.emailDomains.length > 0) {
+      if (!collegeData.emailDomains.includes(userEmailDomain)) {
+        throw new ApiError(
+          400, 
+          `To register with ${collegeData.name}, you must use an email address from one of these domains: ${collegeData.emailDomains.join(', ')}`
+        );
+      }
+    }
+  }
 
   // Generate verification token
   const verificationToken = crypto.randomBytes(32).toString('hex');

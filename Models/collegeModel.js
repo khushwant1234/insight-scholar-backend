@@ -12,6 +12,12 @@ const collegeSchema = new Schema(
     location: {
       type: String,
     },
+    // Add this new field for email domains
+    emailDomains: {
+      type: [String],
+      default: [],
+      description: "List of allowed email domains for this college"
+    },
     // Users who have joined this college page on your website
     members: [
       {
