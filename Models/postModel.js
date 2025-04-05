@@ -35,6 +35,11 @@ const postSchema = new Schema(
         ref: "Reply",
       },
     ],
+    // New field for anonymous posting
+    isAnonymous: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );

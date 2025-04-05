@@ -4,10 +4,10 @@ import { User } from "../Models/userModel.js"; // Added to update user stats
 import { Upvote } from "../Models/upvoteModel.js"; // Import the new Upvote model
 import { checkAndUpdateMentorStatus } from "../utils/mentorUtils.js";
 
-// Create a new post
+// Modify the createPost function to handle isAnonymous flag
 const createPost = async (req, res) => {
   try {
-    const { author, college, content, media } = req.body;
+    const { author, college, content, media, isAnonymous } = req.body;
 
     // Basic validation: author, college and content are required
     if (!author || !college || !content) {
@@ -19,7 +19,14 @@ const createPost = async (req, res) => {
       return res.status(400).json({ error: "Post content cannot exceed 300 characters" });
     }
 
-    const post = await Post.create({ author, college, content, media });
+    // Create post with isAnonymous flag
+    const post = await Post.create({ 
+      author, 
+      college, 
+      content, 
+      media, 
+      isAnonymous: isAnonymous || false 
+    });
 
     // Update the college document: push the new post's ID into the posts field
     await College.findByIdAndUpdate(college, { $push: { posts: post._id } });
@@ -44,6 +51,7 @@ const createPost = async (req, res) => {
 
 // Update an existing post
 const updatePost = async (req, res) => {
+  console.log("Update post request:");
   try {
     const { id } = req.params;
     const { content, media } = req.body;
@@ -64,6 +72,7 @@ const updatePost = async (req, res) => {
     if (media) post.media = media;
 
     const updatedPost = await post.save();
+    console.log("Post updated:", updatedPost);
     res.json({success: true, updatedPost});
   } catch (error) {
     console.error("Error updating post:", error);
