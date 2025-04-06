@@ -18,16 +18,12 @@ const createReply = async (req, res) => {
     // Add reply to post's replies array
     await Post.findByIdAndUpdate(post, { $push: { replies: reply._id } });
     
-    // Add 6 karma for replying and update stats
+    // Update only the stats counter, not karma
     await User.findByIdAndUpdate(author, { 
       $inc: { 
-        "stats.answersGiven": 1,
-        karma: 6  // Add 6 karma for replying
+        "stats.answersGiven": 1
       }
     });
-    
-    // Check if user should become a mentor
-    await checkAndUpdateMentorStatus(author);
 
     res.status(201).json({ success: true, reply });
   } catch (error) {
@@ -73,11 +69,10 @@ const deleteReply = async (req, res) => {
     // Remove reply from post's replies array
     await Post.findByIdAndUpdate(reply.post, { $pull: { replies: reply._id } });
     
-    // Remove karma gained from replying
+    // Update only the stats counter, not karma
     await User.findByIdAndUpdate(reply.author, { 
       $inc: { 
-        "stats.answersGiven": -1,
-        karma: -6
+        "stats.answersGiven": -1
       }
     });
 

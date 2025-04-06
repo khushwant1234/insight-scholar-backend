@@ -4,7 +4,7 @@ import { User } from "../Models/userModel.js"; // Added to update user stats
 import { Upvote } from "../Models/upvoteModel.js"; // Import the new Upvote model
 import { checkAndUpdateMentorStatus } from "../utils/mentorUtils.js";
 
-// Modify the createPost function to handle isAnonymous flag
+// Modify the createPost function to remove karma addition
 const createPost = async (req, res) => {
   try {
     const { author, college, content, media, isAnonymous } = req.body;
@@ -31,17 +31,13 @@ const createPost = async (req, res) => {
     // Update the college document: push the new post's ID into the posts field
     await College.findByIdAndUpdate(college, { $push: { posts: post._id } });
 
-    // Update the user's stats AND add 5 karma for posting
+    // Update only the user's stats, not karma
     await User.findByIdAndUpdate(author, { 
       $inc: { 
-        "stats.questionsAsked": 1,
-        karma: 5  // Add 5 karma for posting
+        "stats.questionsAsked": 1
       } 
     });
     
-    // Check if user should become a mentor
-    await checkAndUpdateMentorStatus(author);
-
     res.status(201).json({ success: true, post });
   } catch (error) {
     console.error("Error creating post:", error);
@@ -80,7 +76,7 @@ const updatePost = async (req, res) => {
   }
 };
 
-// Delete an existing post
+// Modify deletePost to remove karma deduction
 const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
@@ -96,11 +92,10 @@ const deletePost = async (req, res) => {
     // Use deleteOne() instead of remove()
     await post.deleteOne();
 
-    // Decrease karma by 5 when post is deleted
+    // Decrease only the stats counter, not karma
     await User.findByIdAndUpdate(post.author, { 
       $inc: { 
-        "stats.questionsAsked": -1,
-        karma: -5  // Remove karma gained from posting
+        "stats.questionsAsked": -1
       } 
     });
     
@@ -160,7 +155,7 @@ const getPostsByUser = async (req, res) => {
   }
 };
 
-// Modify updatePostUpvotes function
+// Modify updatePostUpvotes to award +1/-1 karma
 const updatePostUpvotes = async (req, res) => {
   try {
     const { id } = req.params;
@@ -201,9 +196,9 @@ const updatePostUpvotes = async (req, res) => {
       // Update post's upvote counter
       post.upvotes += 1;
       
-      // Give karma to author (only if not self-upvoting)
+      // Give karma to author (only if not self-upvoting) - Changed to +1
       if (postAuthor._id.toString() !== userId) {
-        postAuthor.karma += 2;
+        postAuthor.karma += 1; // Changed from +2 to +1
         await postAuthor.save();
         console.log("Karma added to author:", postAuthor.karma);
         
@@ -222,9 +217,9 @@ const updatePostUpvotes = async (req, res) => {
       // Update post's upvote counter
       post.upvotes -= 1;
       
-      // Remove karma from author (only if not self-upvoting)
+      // Remove karma from author (only if not self-upvoting) - Changed to -1
       if (postAuthor._id.toString() !== userId) {
-        postAuthor.karma = Math.max(0, postAuthor.karma - 2);
+        postAuthor.karma = Math.max(0, postAuthor.karma - 1); // Changed from -2 to -1
         await postAuthor.save();
         console.log("Karma removed from author:", postAuthor.karma);
       }
