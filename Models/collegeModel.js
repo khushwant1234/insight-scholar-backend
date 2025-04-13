@@ -44,6 +44,44 @@ const collegeSchema = new Schema(
         type: String, // e.g., "Public", "Private", etc.
       },
     },
+    // College metrics ratings (1-5 scale)
+    metrics: {
+      safety: {
+        type: Number,
+        min: 1,
+        max: 5,
+      },
+      healthcare: {
+        type: Number,
+        min: 1,
+        max: 5,
+      },
+      qualityOfTeaching: {
+        type: Number,
+        min: 1,
+        max: 5,
+      },
+      campusCulture: {
+        type: Number,
+        min: 1,
+        max: 5,
+      },
+      studentSupport: {
+        type: Number,
+        min: 1,
+        max: 5,
+      },
+      affordability: {
+        type: Number,
+        min: 1,
+        max: 5,
+      },
+      placements: {
+        type: Number,
+        min: 1,
+        max: 5,
+      },
+    },
     // Posts (or questions/comments) posted on this college's page
     posts: [
       {

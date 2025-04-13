@@ -100,6 +100,7 @@ const getAllColleges = async (req, res) => {
 
 // Update an existing college
 const updateCollege = async (req, res) => {
+  console.log("Update College Controller Called");
   try {
     const { id } = req.params;
     const { name, profilePic, location, description, facts } = req.body;
@@ -116,7 +117,8 @@ const updateCollege = async (req, res) => {
     if (facts) college.facts = facts;
 
     const updatedCollege = await college.save();
-    res.json(updatedCollege);
+    console.log("Updated College:", updatedCollege);
+    res.json({ success: true, updatedCollege});
   } catch (error) {
     console.error("Error updating college:", error);
     res.status(500).json({ error: "Server error" });
