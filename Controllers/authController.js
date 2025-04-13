@@ -77,10 +77,10 @@ export const registerUser = AsyncHandler(async (req, res) => {
   try {
     await sendEmail({
       email: newUser.email,
-      subject: "Verify Your Email - Nandan",
+      subject: "Verify Your Email - Team Insight Scholar",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #D43134;">Welcome to Nandan!</h2>
+          <h2 style="color: #D43134;">Welcome to Insight Scholar!</h2>
           <p>Hello ${newUser.name},</p>
           <p>Thank you for registering with us. Please verify your email address by clicking the button below:</p>
           <div style="text-align: center; margin: 30px 0;">
@@ -91,7 +91,7 @@ export const registerUser = AsyncHandler(async (req, res) => {
           <p>If the button doesn't work, please copy and paste this URL into your browser:</p>
           <p style="word-break: break-all; color: #666;">${verificationURL}</p>
           <p>This link will expire in 24 hours.</p>
-          <p>Best regards,<br>The Nandan Team</p>
+          <p>Best regards,<br>The Team Insight Scholar</p>
         </div>
       `
     });
@@ -207,10 +207,10 @@ export const resendVerificationEmail = AsyncHandler(async (req, res) => {
   try {
     await sendEmail({
       email: user.email,
-      subject: "Verify Your Email - Nandan",
+      subject: "Verify Your Email - Team Insight Scholar",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #D43134;">Nandan Email Verification</h2>
+          <h2 style="color: #D43134;">Insight Scholar Email Verification</h2>
           <p>Hello ${user.name},</p>
           <p>You requested a new verification link. Please verify your email address by clicking the button below:</p>
           <div style="text-align: center; margin: 30px 0;">
@@ -221,7 +221,7 @@ export const resendVerificationEmail = AsyncHandler(async (req, res) => {
           <p>If the button doesn't work, please copy and paste this URL into your browser:</p>
           <p style="word-break: break-all; color: #666;">${verificationURL}</p>
           <p>This link will expire in 24 hours.</p>
-          <p>Best regards,<br>The Nandan Team</p>
+          <p>Best regards,<br>The Team Insight Scholar</p>
         </div>
       `
     });
