@@ -44,42 +44,91 @@ const collegeSchema = new Schema(
         type: String, // e.g., "Public", "Private", etc.
       },
     },
-    // College metrics ratings (1-5 scale)
+    // College metrics with both rating (0-5) and description
     metrics: {
       safety: {
-        type: Number,
-        min: 1,
-        max: 5,
+        rating: {
+          type: Number,
+          min: 0,
+          max: 5,
+          default: 0
+        },
+        description: {
+          type: String,
+          default: ""
+        }
       },
       healthcare: {
-        type: Number,
-        min: 1,
-        max: 5,
+        rating: {
+          type: Number,
+          min: 0,
+          max: 5,
+          default: 0
+        },
+        description: {
+          type: String,
+          default: ""
+        }
       },
       qualityOfTeaching: {
-        type: Number,
-        min: 1,
-        max: 5,
+        rating: {
+          type: Number,
+          min: 0,
+          max: 5,
+          default: 0
+        },
+        description: {
+          type: String,
+          default: ""
+        }
       },
       campusCulture: {
-        type: Number,
-        min: 1,
-        max: 5,
+        rating: {
+          type: Number,
+          min: 0,
+          max: 5,
+          default: 0
+        },
+        description: {
+          type: String,
+          default: ""
+        }
       },
       studentSupport: {
-        type: Number,
-        min: 1,
-        max: 5,
+        rating: {
+          type: Number,
+          min: 0,
+          max: 5,
+          default: 0
+        },
+        description: {
+          type: String,
+          default: ""
+        }
       },
       affordability: {
-        type: Number,
-        min: 1,
-        max: 5,
+        rating: {
+          type: Number,
+          min: 0,
+          max: 5,
+          default: 0
+        },
+        description: {
+          type: String,
+          default: ""
+        }
       },
       placements: {
-        type: Number,
-        min: 1,
-        max: 5,
+        rating: {
+          type: Number,
+          min: 0,
+          max: 5,
+          default: 0
+        },
+        description: {
+          type: String,
+          default: ""
+        }
       },
     },
     // Posts (or questions/comments) posted on this college's page

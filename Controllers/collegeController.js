@@ -100,10 +100,9 @@ const getAllColleges = async (req, res) => {
 
 // Update an existing college
 const updateCollege = async (req, res) => {
-  console.log("Update College Controller Called");
   try {
     const { id } = req.params;
-    const { name, profilePic, location, description, facts } = req.body;
+    const { name, profilePic, location, description, facts, domain, emailDomains, metrics } = req.body;
 
     const college = await College.findById(id);
     if (!college) {
@@ -115,10 +114,30 @@ const updateCollege = async (req, res) => {
     if (location) college.location = location;
     if (description) college.description = description;
     if (facts) college.facts = facts;
+    if (domain) college.domain = domain;
+    if (emailDomains) college.emailDomains = emailDomains;
+    
+    // Handle metrics with nested structure
+    if (metrics) {
+      // Create metrics object if it doesn't exist
+      if (!college.metrics) college.metrics = {};
+      
+      // Update each metric if provided
+      Object.keys(metrics).forEach(metricKey => {
+        if (!college.metrics[metricKey]) college.metrics[metricKey] = {};
+        
+        if (metrics[metricKey].rating !== undefined) {
+          college.metrics[metricKey].rating = metrics[metricKey].rating;
+        }
+        
+        if (metrics[metricKey].description !== undefined) {
+          college.metrics[metricKey].description = metrics[metricKey].description;
+        }
+      });
+    }
 
     const updatedCollege = await college.save();
-    console.log("Updated College:", updatedCollege);
-    res.json({ success: true, updatedCollege});
+    res.json({ success: true, college: updatedCollege });
   } catch (error) {
     console.error("Error updating college:", error);
     res.status(500).json({ error: "Server error" });
