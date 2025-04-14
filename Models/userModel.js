@@ -95,6 +95,12 @@ const userSchema = new Schema(
     },
     verificationToken: String,
     verificationTokenExpires: Date,
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

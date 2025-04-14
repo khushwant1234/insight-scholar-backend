@@ -127,7 +127,9 @@ const updateCollege = async (req, res) => {
         if (!college.metrics[metricKey]) college.metrics[metricKey] = {};
         
         if (metrics[metricKey].rating !== undefined) {
-          college.metrics[metricKey].rating = metrics[metricKey].rating;
+          // Ensure rating is within bounds and properly formatted
+          const rating = parseFloat(metrics[metricKey].rating);
+          college.metrics[metricKey].rating = Math.min(5, Math.max(0, rating));
         }
         
         if (metrics[metricKey].description !== undefined) {

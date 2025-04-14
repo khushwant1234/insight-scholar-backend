@@ -235,3 +235,148 @@ export const resendVerificationEmail = AsyncHandler(async (req, res) => {
     throw new ApiError(500, "Failed to send verification email");
   }
 });
+
+// Request password reset
+export const forgotPassword = AsyncHandler(async (req, res) => {
+  const { email } = req.body;
+  
+  if (!email) {
+    throw new ApiError(400, "Email is required");
+  }
+  
+  const user = await User.findOne({ email });
+  
+  if (!user) {
+    // For security reasons, don't disclose that the user doesn't exist
+    return res.status(200).json({ 
+      success: true, 
+      message: "If an account with that email exists, a password reset link has been sent." 
+    });
+  }
+  
+  // Generate reset token
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  
+  // Hash and set the reset token
+  user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // Token expires in 15 minutes
+  
+  await user.save({ validateBeforeSave: false });
+  
+  // Generate reset URL
+  const resetURL = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
+  
+  // Send reset email
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Password Reset - InsightScholar",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #5E35B1;">Reset Your Password</h2>
+          <p>Hello ${user.name},</p>
+          <p>You requested a password reset. Please click the button below to set a new password:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetURL}" style="background-color: #5E35B1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+              Reset Password
+            </a>
+          </div>
+          <p>If you didn't request this reset, you can safely ignore this email.</p>
+          <p>This link will expire in 15 minutes for security reasons.</p>
+          <p>If the button doesn't work, please copy and paste this URL into your browser:</p>
+          <p style="word-break: break-all; color: #666;">${resetURL}</p>
+          <p>Best regards,<br>The InsightScholar Team</p>
+        </div>
+      `
+    });
+    
+    res.status(200).json({
+      success: true,
+      message: "Password reset link sent to your email"
+    });
+  } catch (error) {
+    console.error('Failed to send password reset email:', error);
+    
+    // Reset the token fields in case of email failure
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    
+    throw new ApiError(500, "Failed to send password reset email");
+  }
+});
+
+// Reset password with token
+export const resetPassword = AsyncHandler(async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+  
+  if (!token || !password) {
+    throw new ApiError(400, "Token and new password are required");
+  }
+  
+  // Hash the token to compare with stored hash
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+  
+  // Find user with matching token and valid expiration
+  const user = await User.findOne({
+    resetPasswordToken: hashedToken,
+    resetPasswordExpires: { $gt: Date.now() }
+  });
+  
+  if (!user) {
+    throw new ApiError(400, "Password reset token is invalid or has expired");
+  }
+  
+  // Set new password and clear reset token fields
+  user.password = password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+  
+  await user.save();
+  
+  // Generate new JWT token for automatic login after reset
+  const jwtToken = generateJWTToken(user._id);
+  
+  res.status(200).json({
+    success: true,
+    message: "Password has been reset successfully",
+    data: {
+      token: jwtToken,
+      user: {
+        ...user.toObject(),
+        password: undefined
+      }
+    }
+  });
+});
+
+// Verify reset token validity (for frontend validation)
+export const verifyResetToken = AsyncHandler(async (req, res) => {
+  const { token } = req.params;
+  
+  if (!token) {
+    throw new ApiError(400, "Token is required");
+  }
+  
+  // Hash the token to compare with stored hash
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+  
+  // Check if token exists and is not expired
+  const user = await User.findOne({
+    resetPasswordToken: hashedToken,
+    resetPasswordExpires: { $gt: Date.now() }
+  });
+  
+  if (!user) {
+    throw new ApiError(400, "Password reset token is invalid or has expired");
+  }
+  
+  res.status(200).json({
+    success: true,
+    message: "Token is valid",
+    data: {
+      email: user.email
+    }
+  });
+});

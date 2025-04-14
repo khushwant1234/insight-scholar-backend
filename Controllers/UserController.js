@@ -49,16 +49,12 @@ const updateUserProfile = async (req, res) => {
     }
     
     // Update fields if provided in the request body
-    const { name, profilePic, college, major, year, interests, linkedIn } = req.body;
+    const { name, profilePic, major, year, interests, linkedIn } = req.body;
     if (name) user.name = name;
     if (profilePic) user.profilePic = profilePic;
     
-    // Special handling for college field
-    if (college === null || college === "notInCollege") {
-      user.college = null; // Clear the college reference
-    } else if (college) {
-      user.college = college;
-    }
+    // Note: We're intentionally not updating the college field
+    // Even if it's sent in the request, we ignore it
     
     if (major) user.major = major;
     if (year) user.year = year;
@@ -72,7 +68,7 @@ const updateUserProfile = async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       profilePic: updatedUser.profilePic,
-      college: updatedUser.college,
+      college: updatedUser.college, // Return the original college
       major: updatedUser.major,
       year: updatedUser.year,
       interests: updatedUser.interests,
