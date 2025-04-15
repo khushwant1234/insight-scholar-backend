@@ -13,21 +13,36 @@ const sendEmail = async (options) => {
       }
     });
 
-    // Define email options
+    // Define email options with improved headers to reduce spam classification
     const mailOptions = {
       from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM}>`,
       to: options.email,
       subject: options.subject,
-      html: options.html
+      html: options.html,
+      // Add important headers to improve deliverability
+      headers: {
+        'Priority': 'High',
+        'X-Priority': '1',
+        'X-MSMail-Priority': 'High',
+        'Importance': 'High'
+      },
+      // Add message ID with sender domain to improve deliverability
+      messageId: `<${Date.now()}.${Math.random().toString().slice(2)}@${process.env.EMAIL_DOMAIN || 'insightscholar.com'}>`,
+      // Add list-unsubscribe header (important for deliverability)
+      list: {
+        unsubscribe: {
+          url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/unsubscribe`,
+          comment: 'Unsubscribe from InsightScholar emails'
+        }
+      }
     };
 
-    // Send the email
+    // Send email
     const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully to', options.email);
-    
+    console.log('Email sent successfully:', info.messageId);
     return info;
   } catch (error) {
-    console.error('Email sending error:', error);
+    console.error('Error sending email:', error);
     throw error;
   }
 };

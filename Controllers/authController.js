@@ -77,21 +77,27 @@ export const registerUser = AsyncHandler(async (req, res) => {
   try {
     await sendEmail({
       email: newUser.email,
-      subject: "Verify Your Email - Team Insight Scholar",
+      subject: "Verify Your Email - InsightScholar",
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #D43134;">Welcome to Insight Scholar!</h2>
-          <p>Hello ${newUser.name},</p>
-          <p>Thank you for registering with us. Please verify your email address by clicking the button below:</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <img src="${process.env.FRONTEND_URL || 'http://localhost:5173'}/logonobg2.png" alt="InsightScholar Logo" style="max-width: 120px; height: auto;">
+          </div>
+          <h2 style="color: #5E35B1; margin-bottom: 20px; font-size: 24px;">Welcome to InsightScholar!</h2>
+          <p style="color: #333; margin-bottom: 15px; font-size: 16px;">Hello ${newUser.name},</p>
+          <p style="color: #333; margin-bottom: 25px; font-size: 16px;">Thank you for registering with us. Please verify your email address by clicking the button below:</p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${verificationURL}" style="background-color: #D43134; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+            <a href="${verificationURL}" style="background-color: #5E35B1; color: white; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block; font-size: 16px;">
               Verify Email
             </a>
           </div>
-          <p>If the button doesn't work, please copy and paste this URL into your browser:</p>
-          <p style="word-break: break-all; color: #666;">${verificationURL}</p>
-          <p>This link will expire in 24 hours.</p>
-          <p>Best regards,<br>The Team Insight Scholar</p>
+          <p style="color: #666; margin-bottom: 10px; font-size: 14px;">If the button doesn't work, please copy and paste this URL into your browser:</p>
+          <p style="word-break: break-all; color: #5E35B1; margin-bottom: 25px; font-size: 14px;">${verificationURL}</p>
+          <p style="color: #666; margin-bottom: 15px; font-size: 14px;">This link will expire in 24 hours.</p>
+          <p style="color: #666; margin-bottom: 10px; font-size: 14px;">Best regards,<br>The InsightScholar Team</p>
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center; color: #888; font-size: 12px;">
+            <p>© ${new Date().getFullYear()} InsightScholar. All rights reserved.</p>
+          </div>
         </div>
       `
     });
@@ -207,22 +213,29 @@ export const resendVerificationEmail = AsyncHandler(async (req, res) => {
   try {
     await sendEmail({
       email: user.email,
-      subject: "Verify Your Email - Team Insight Scholar",
+      subject: "Verify Your Email - InsightScholar",
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #D43134;">Insight Scholar Email Verification</h2>
-          <p>Hello ${user.name},</p>
-          <p>You requested a new verification link. Please verify your email address by clicking the button below:</p>
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${verificationURL}" style="background-color: #D43134; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
-              Verify Email
-            </a>
-          </div>
-          <p>If the button doesn't work, please copy and paste this URL into your browser:</p>
-          <p style="word-break: break-all; color: #666;">${verificationURL}</p>
-          <p>This link will expire in 24 hours.</p>
-          <p>Best regards,<br>The Team Insight Scholar</p>
-        </div>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <img src="${process.env.FRONTEND_URL || 'http://localhost:5173'}/logonobg2.png" alt="InsightScholar Logo" style="max-width: 120px; height: auto;">
+      </div>
+      <h2 style="color: #5E35B1; margin-bottom: 20px; font-size: 24px;">Email Verification</h2>
+      <p style="color: #333; margin-bottom: 15px; font-size: 16px;">Hello ${user.name},</p>
+      <p style="color: #333; margin-bottom: 25px; font-size: 16px;">You requested a new verification link. Please verify your email address by clicking the button below:</p>
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${verificationURL}" style="background-color: #5E35B1; color: white; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block; font-size: 16px;">
+          Verify Email
+        </a>
+      </div>
+      <p style="color: #666; margin-bottom: 10px; font-size: 14px;">If the button doesn't work, please copy and paste this URL into your browser:</p>
+      <p style="word-break: break-all; color: #5E35B1; margin-bottom: 25px; font-size: 14px;">${verificationURL}</p>
+      <p style="color: #666; margin-bottom: 15px; font-size: 14px;">This link will expire in 24 hours.</p>
+      <p style="color: #666; margin-bottom: 10px; font-size: 14px;">Best regards,<br>The InsightScholar Team</p>
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center; color: #888; font-size: 12px;">
+        <p>© ${new Date().getFullYear()} InsightScholar. All rights reserved.</p>
+        
+      </div>
+    </div>
       `
     });
     
