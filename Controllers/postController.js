@@ -45,7 +45,7 @@ const createPost = async (req, res) => {
         "stats.questionsAsked": 1
       } 
     });
-    console.log("Post:", post);
+    // console.log("Post:", post);
     
     res.status(201).json({ success: true, post });
   } catch (error) {
