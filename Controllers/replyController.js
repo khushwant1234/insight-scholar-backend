@@ -4,6 +4,7 @@ import { Post } from "../Models/postModel.js";
 import { checkAndUpdateMentorStatus } from "../utils/mentorUtils.js";
 
 // Create a new reply
+// Modified createReply function to add fake historical dates as separate fields
 const createReply = async (req, res) => {
   try {
     const { author, post, content, media } = req.body;
@@ -13,7 +14,35 @@ const createReply = async (req, res) => {
       return res.status(400).json({ error: "Author, post, and content are required" });
     }
 
-    const reply = await Reply.create({ author, post, content, media });
+    // Find the post being replied to
+    const parentPost = await Post.findById(post);
+    if (!parentPost) {
+      return res.status(404).json({ error: "Parent post not found" });
+    }
+
+    // Get the display date of the post (or actual createdAt if no display date)
+    const postDate = parentPost.displayCreatedAt || parentPost.createdAt;
+    
+    // Generate a random date between post's date and May 9, 2025
+    const endDate = new Date('2025-05-09T23:59:59Z');
+    
+    // Ensure reply date is at least 1 minute after post date
+    const minReplyDate = new Date(postDate.getTime() + 60000); // Add 1 minute
+    
+    // Calculate the random timestamp (between post time + 1 minute and end date)
+    const randomTimestamp = minReplyDate.getTime() + 
+      Math.random() * (endDate.getTime() - minReplyDate.getTime());
+    const displayDate = new Date(randomTimestamp);
+
+    // Create reply with the fake display dates
+    const reply = await Reply.create({ 
+      author, 
+      post, 
+      content, 
+      media,
+      displayCreatedAt: displayDate,
+      displayUpdatedAt: displayDate
+    });
     
     // Add reply to post's replies array
     await Post.findByIdAndUpdate(post, { $push: { replies: reply._id } });

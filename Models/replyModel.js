@@ -28,6 +28,15 @@ const replySchema = new Schema(
       type: Number,
       default: 0,
     },
+    // Fake date fields for displaying historical dates
+    displayCreatedAt: {
+      type: Date,
+      default: null,
+    },
+    displayUpdatedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

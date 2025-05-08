@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { application } from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 import cookieParser from 'cookie-parser';
@@ -14,6 +14,7 @@ import chatRouter from './Routes/chatRouter.js';
 import upvoteRouter from './Routes/upvoteRouter.js';
 // import mongoose from 'mongoose';
 import cron from 'node-cron';
+// import { getUnUpdatedColleges } from './Controllers/testController.js';
 
 import { createServer } from 'http';
 import { Server } from 'socket.io';
@@ -118,6 +119,7 @@ app.use('/api/reply', replyRouter);
 app.use("/api/mentor-requests", mentorRequestRouter);
 app.use('/api/chat', chatRouter);
 app.use("/api/upvote", upvoteRouter);
+// app.use("/api/test", getUnUpdatedColleges);
 
 app.get('/', (req, res) => {
   res.send('API is running...');

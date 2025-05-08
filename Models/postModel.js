@@ -39,6 +39,15 @@ const postSchema = new Schema(
     isAnonymous: {
       type: Boolean,
       default: false
+    },
+    // Fake date fields for displaying historical dates
+    displayCreatedAt: {
+      type: Date,
+      default: null
+    },
+    displayUpdatedAt: {
+      type: Date, 
+      default: null
     }
   },
   { timestamps: true }
