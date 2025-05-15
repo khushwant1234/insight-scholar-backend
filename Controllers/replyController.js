@@ -7,7 +7,7 @@ import { checkAndUpdateMentorStatus } from "../utils/mentorUtils.js";
 // Modified createReply function to add fake historical dates as separate fields
 const createReply = async (req, res) => {
   try {
-    const { author, post, content, media } = req.body;
+    const { author, post, content, media, isAnonymous } = req.body;
 
     // Basic validation: author, post and content are required
     if (!author || !post || !content) {
@@ -34,12 +34,13 @@ const createReply = async (req, res) => {
       Math.random() * (endDate.getTime() - minReplyDate.getTime());
     const displayDate = new Date(randomTimestamp);
 
-    // Create reply with the fake display dates
+    // Create reply with the fake display dates and isAnonymous field
     const reply = await Reply.create({ 
       author, 
       post, 
       content, 
       media,
+      isAnonymous: isAnonymous || false, // Include the isAnonymous field
       displayCreatedAt: displayDate,
       displayUpdatedAt: displayDate
     });

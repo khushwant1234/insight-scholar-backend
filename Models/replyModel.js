@@ -28,6 +28,11 @@ const replySchema = new Schema(
       type: Number,
       default: 0,
     },
+    // Add isAnonymous field
+    isAnonymous: {
+      type: Boolean,
+      default: false,
+    },
     // Fake date fields for displaying historical dates
     displayCreatedAt: {
       type: Date,
