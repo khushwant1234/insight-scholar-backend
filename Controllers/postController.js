@@ -4,7 +4,7 @@ import { User } from "../Models/userModel.js";
 import { Upvote } from "../Models/upvoteModel.js";
 import { checkAndUpdateMentorStatus } from "../utils/mentorUtils.js";
 
-// Modified createPost function to add fake historical dates as separate fields
+// Modified createPost function without the random date generation
 const createPost = async (req, res) => {
   try {
     const { author, college, content, media, isAnonymous } = req.body;
@@ -19,21 +19,13 @@ const createPost = async (req, res) => {
       return res.status(400).json({ error: "Post content cannot exceed 300 characters" });
     }
 
-    // Generate a random date between March 20, 2025 and May 9, 2025
-    const startDate = new Date('2025-03-20T00:00:00Z');
-    const endDate = new Date('2025-05-09T23:59:59Z');
-    const randomTimestamp = startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime());
-    const displayDate = new Date(randomTimestamp);
-
-    // Create post with standard fields including the display dates
+    // Create post with standard fields (without display dates)
     const post = await Post.create({ 
       author, 
       college, 
       content, 
       media, 
-      isAnonymous: isAnonymous || false,
-      displayCreatedAt: displayDate,
-      displayUpdatedAt: displayDate
+      isAnonymous: isAnonymous || false
     });
 
     // Update the college document: push the new post's ID into the posts field
@@ -45,7 +37,6 @@ const createPost = async (req, res) => {
         "stats.questionsAsked": 1
       } 
     });
-    // console.log("Post:", post);
     
     res.status(201).json({ success: true, post });
   } catch (error) {
